@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Brand tokens ─── */
+:root {
+  --gold:         #D4A853;
+  --gold-light:   #ECC96A;
+  --orange-soft:  #E8824A;
+  --sky-deep:     #050D1A;
+  --sky-dark:     #0A1628;
+  --sky-mid:      #0D2447;
+  --glass-bg:     rgba(8, 18, 36, 0.55);
+  --glass-border: rgba(212, 168, 83, 0.12);
+}
+
+/* ─── Base ─── */
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--sky-deep);
+  color: white;
+  overflow-x: hidden;
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Custom scrollbar ─── */
+::-webkit-scrollbar              { width: 5px; }
+::-webkit-scrollbar-track        { background: var(--sky-deep); }
+::-webkit-scrollbar-thumb        { background: var(--gold-dim, #A0782E); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--gold); }
+
+/* ─── Glassmorphism utility ─── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* ─── Gold gradient text ─── */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #D4A853 0%, #ECC96A 55%, #E8824A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Shimmer button overlay ─── */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.25) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: shimmer 3.5s linear infinite;
+  pointer-events: none;
+}
+
+/* ─── Airplane CSS path animation ─── */
+/*
+  offset-path uses raw pixel coords relative to the containing block.
+  The container is full viewport width × 220px tall.
+  Path spans from -200px (off-screen left) to calc(100vw + 200px).
+  We normalise to a 1440px-wide reference and let the browser scale.
+*/
+.plane-on-path {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Initial position outside left edge */
+  offset-distance: 0%;
+  offset-rotate: auto;
+  animation: planeFly 18s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+
+@keyframes planeFly {
+  0%   { offset-distance: 0%;   opacity: 0; }
+  4%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* ─── Particle sparkle ─── */
+@keyframes particleDrift {
+  0%   { transform: translateY(0)   scale(1);   opacity: 0.6; }
+  50%  { transform: translateY(-40px) scale(1.2); opacity: 1;   }
+  100% { transform: translateY(-80px) scale(0.8); opacity: 0;   }
+}
+
+/* ─── Glow pulse on CTA ─── */
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 20px rgba(212,168,83,0.3), 0 0 40px rgba(212,168,83,0.1); }
+  50%     { box-shadow: 0 0 35px rgba(212,168,83,0.6), 0 0 70px rgba(212,168,83,0.3); }
+}
+.cta-glow { animation: glowPulse 3s ease-in-out infinite; }
+
+/* ─── Underline hover for nav links ─── */
+.nav-link-underline::after {
+  content: '';
+  display: block;
+  height: 1.5px;
+  width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--orange-soft));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  margin-top: 2px;
+}
+.nav-link-underline:hover::after { width: 100%; }
