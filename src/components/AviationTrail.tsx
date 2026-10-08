@@ -47,7 +47,7 @@ function AirplaneSVG() {
 ────────────────────────────────────────────────────────────── */
 export default function AviationTrail() {
   const planeRef = useRef<SVGGElement>(null)
-  const ctxRef   = useRef<any>(null)
+  const ctxRef   = useRef<{ revert: () => void } | null>(null)
 
   useEffect(() => {
     let cancelled = false

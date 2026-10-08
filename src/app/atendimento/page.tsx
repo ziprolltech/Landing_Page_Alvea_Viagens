@@ -5,6 +5,11 @@ import { MessageCircle, Mail, Phone, MapPin, MessageSquare, User, Send } from 'l
 import PageHeader from '@/components/ui/PageHeader'
 import SectionReveal from '@/components/ui/SectionReveal'
 import GlassCard from '@/components/ui/GlassCard'
+import { buildWhatsAppUrl } from '@/lib/config/links'
+import {
+  buildContactRequestMessage, validateContactRequest,
+  type ContactRequest, type ContactRequestErrors,
+} from '@/lib/atendimento/whatsapp-message'
 
 const CONTACT_METHODS = [
   {
@@ -13,9 +18,9 @@ const CONTACT_METHODS = [
     iconBg: 'bg-emerald-400/12',
     title: 'WhatsApp',
     desc: 'Atendimento rápido e direto com nossos especialistas.',
-    info: '+55 (11) 99999-9999',
+    info: '+55 (16) 99731-5748',
     cta: 'Iniciar conversa →',
-    href: 'https://wa.me/5511999999999',
+    href: 'https://wa.me/5516997315748',
   },
   {
     icon: Mail,
@@ -23,19 +28,9 @@ const CONTACT_METHODS = [
     iconBg: 'bg-gold/12',
     title: 'E-mail',
     desc: 'Envie sua solicitação e receba resposta em até 2 horas úteis.',
-    info: 'contato@alveaviagens.com.br',
+    info: 'alveaviagens@gmail.com',
     cta: 'Enviar e-mail →',
-    href: 'mailto:contato@alveaviagens.com.br',
-  },
-  {
-    icon: Phone,
-    iconColor: 'text-sky-bright',
-    iconBg: 'bg-sky-bright/12',
-    title: 'Atendimento Personalizado',
-    desc: 'Agende uma conversa exclusiva com seu consultor dedicado.',
-    info: 'Seg–Sex, 9h às 18h',
-    cta: 'Agendar conversa →',
-    href: '/atendimento',
+    href: 'mailto:alveaviagens@gmail.com',
   },
 ]
 
@@ -44,23 +39,39 @@ const FIELD_CLASS =
 
 const LABEL_CLASS = 'text-white/65 text-[13px] font-medium mb-2 flex items-center gap-2'
 
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null
+  return (
+    <p id={id} role="alert" className="mt-2 text-[12.5px] text-gold-light">
+      {message}
+    </p>
+  )
+}
+
 export default function AtendimentoPage() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ContactRequest>({
     nome: '',
     email: '',
     telefone: '',
     destino: '',
     mensagem: '',
   })
-  const [submitted, setSubmitted] = useState(false)
+  const [errors, setErrors] = useState<ContactRequestErrors>({})
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    const name = e.target.name as keyof ContactRequest
+    setForm((prev) => ({ ...prev, [name]: e.target.value }))
+    setErrors((prev) => (prev[name] ? { ...prev, [name]: undefined } : prev))
   }
 
+  /* Validates, then opens WhatsApp with the message pre-filled. Nothing is sent
+     from here: the visitor reviews the text and presses "Enviar" in WhatsApp. */
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setSubmitted(true)
+    const found = validateContactRequest(form)
+    setErrors(found)
+    if (Object.keys(found).length > 0) return
+    window.open(buildWhatsAppUrl(buildContactRequestMessage(form)), '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -98,7 +109,7 @@ export default function AtendimentoPage() {
 
         {/* Contact method cards */}
         <SectionReveal delay={0.08}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-14 max-w-3xl mx-auto">
             {CONTACT_METHODS.map((method) => {
               const Icon = method.icon
               return (
@@ -131,99 +142,102 @@ export default function AtendimentoPage() {
           >
             <h2 className="text-white text-[22px] font-bold mb-8">Envie sua solicitação</h2>
 
-            {submitted ? (
-              <motion.div
-                className="text-center py-12 flex flex-col items-center gap-4"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="w-16 h-16 rounded-full bg-gold/15 flex items-center justify-center mb-2">
-                  <Send size={28} className="text-gold" strokeWidth={1.8} />
-                </div>
-                <h3 className="text-white text-[20px] font-bold">Mensagem enviada!</h3>
-                <p className="text-white/55 text-[15px] max-w-sm leading-relaxed">
-                  Em breve nosso especialista entrará em contato.
-                </p>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
                 {/* Two-col fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Nome */}
                   <div>
-                    <label className={LABEL_CLASS}>
+                    <label htmlFor="atendimento-nome" className={LABEL_CLASS}>
                       <User size={13} className="text-white/40" />
                       Nome
                     </label>
                     <input
                       type="text"
+                      id="atendimento-nome"
                       name="nome"
                       value={form.nome}
                       onChange={handleChange}
                       placeholder="Seu nome completo"
                       className={FIELD_CLASS}
-                      required
+                      aria-required="true"
+                      aria-invalid={errors.nome ? true : undefined}
+                      aria-describedby={errors.nome ? 'atendimento-nome-erro' : undefined}
                     />
+                    <FieldError id="atendimento-nome-erro" message={errors.nome} />
                   </div>
 
                   {/* Email */}
                   <div>
-                    <label className={LABEL_CLASS}>
+                    <label htmlFor="atendimento-email" className={LABEL_CLASS}>
                       <Mail size={13} className="text-white/40" />
                       E-mail
                     </label>
                     <input
                       type="email"
+                      id="atendimento-email"
                       name="email"
                       value={form.email}
                       onChange={handleChange}
                       placeholder="seu@email.com"
                       className={FIELD_CLASS}
-                      required
+                      aria-required="true"
+                      aria-invalid={errors.email ? true : undefined}
+                      aria-describedby={errors.email ? 'atendimento-email-erro' : undefined}
                     />
+                    <FieldError id="atendimento-email-erro" message={errors.email} />
                   </div>
 
                   {/* Telefone */}
                   <div>
-                    <label className={LABEL_CLASS}>
+                    <label htmlFor="atendimento-telefone" className={LABEL_CLASS}>
                       <Phone size={13} className="text-white/40" />
                       Telefone
                     </label>
                     <input
                       type="tel"
+                      id="atendimento-telefone"
                       name="telefone"
                       value={form.telefone}
                       onChange={handleChange}
                       placeholder="(11) 99999-9999"
                       className={FIELD_CLASS}
+                      aria-required="true"
+                      aria-invalid={errors.telefone ? true : undefined}
+                      aria-describedby={errors.telefone ? 'atendimento-telefone-erro' : undefined}
                     />
+                    <FieldError id="atendimento-telefone-erro" message={errors.telefone} />
                   </div>
 
                   {/* Destino */}
                   <div>
-                    <label className={LABEL_CLASS}>
+                    <label htmlFor="atendimento-destino" className={LABEL_CLASS}>
                       <MapPin size={13} className="text-white/40" />
                       Destino desejado
                     </label>
                     <input
                       type="text"
+                      id="atendimento-destino"
                       name="destino"
                       value={form.destino}
                       onChange={handleChange}
                       placeholder="Para onde quer ir?"
                       className={FIELD_CLASS}
+                      aria-required="true"
+                      aria-invalid={errors.destino ? true : undefined}
+                      aria-describedby={errors.destino ? 'atendimento-destino-erro' : undefined}
                     />
+                    <FieldError id="atendimento-destino-erro" message={errors.destino} />
                   </div>
                 </div>
 
                 {/* Mensagem */}
                 <div>
-                  <label className={LABEL_CLASS}>
+                  <label htmlFor="atendimento-mensagem" className={LABEL_CLASS}>
                     <MessageSquare size={13} className="text-white/40" />
                     Mensagem
                   </label>
                   <textarea
+                    id="atendimento-mensagem"
                     name="mensagem"
                     value={form.mensagem}
                     onChange={handleChange}
@@ -231,7 +245,11 @@ export default function AtendimentoPage() {
                     rows={5}
                     className={FIELD_CLASS}
                     style={{ resize: 'vertical' }}
+                    aria-required="true"
+                    aria-invalid={errors.mensagem ? true : undefined}
+                    aria-describedby={errors.mensagem ? 'atendimento-mensagem-erro' : undefined}
                   />
+                  <FieldError id="atendimento-mensagem-erro" message={errors.mensagem} />
                 </div>
 
                 {/* Submit */}
@@ -251,8 +269,7 @@ export default function AtendimentoPage() {
                     Respondemos em até 2 horas úteis
                   </p>
                 </div>
-              </form>
-            )}
+            </form>
           </div>
         </SectionReveal>
       </div>

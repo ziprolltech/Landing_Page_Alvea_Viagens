@@ -69,7 +69,7 @@ export default function HomeCTA() {
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-2">
-          <Link href="/atendimento">
+          <Link href="/destinos">
             <motion.button
               className="btn-shimmer cta-glow flex items-center gap-2.5 px-8 py-3.5 rounded-full text-[14px] font-semibold text-sky-deep"
               style={{

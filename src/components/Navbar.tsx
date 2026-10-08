@@ -11,7 +11,8 @@ const NAV_LINKS = [
   { label: 'Início',      href: '/'           },
   { label: 'Destinos',    href: '/destinos'    },
   { label: 'Milhas',      href: '/milhas'      },
-  { label: 'Passagens',   href: '/passagens'   },
+  { label: 'Grupo de Ofertas', href: '/grupo-de-ofertas' },
+  { label: 'Experiências', href: '/experiencias' },
   { label: 'Atendimento', href: '/atendimento' },
 ]
 
@@ -46,24 +47,24 @@ export default function Navbar() {
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center shrink-0 group">
             <Image
-              src="/logo.png"
+              src="/logo-navbar.png"
               alt="Alvea Viagens"
-              width={130}
-              height={58}
+              width={152}
+              height={68}
               priority
-              className="object-contain w-auto h-[46px] transition-transform duration-300 group-hover:scale-105"
+              className="object-contain w-auto h-[54px] transition-transform duration-300 group-hover:scale-105"
             />
           </Link>
 
           {/* ── Desktop nav ── */}
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             {NAV_LINKS.map((link) => {
               const isActive = pathname === link.href
               return (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`relative nav-link-underline text-[13.5px] font-medium tracking-[0.04em] transition-colors duration-200 ${
+                  className={`relative nav-link-underline whitespace-nowrap text-[13.5px] font-medium tracking-[0.04em] transition-colors duration-200 ${
                     isActive ? 'text-white' : 'text-white/70 hover:text-white'
                   }`}
                 >
@@ -82,7 +83,7 @@ export default function Navbar() {
           </nav>
 
           {/* ── Desktop CTA ── */}
-          <div className="hidden md:flex">
+          <div className="hidden lg:flex">
             <Link href="/atendimento">
               <motion.span
                 className="btn-shimmer cta-glow flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-semibold tracking-wide text-sky-deep cursor-pointer select-none"
@@ -99,7 +100,7 @@ export default function Navbar() {
 
           {/* ── Mobile toggle ── */}
           <button
-            className="md:hidden p-2 text-white/80 hover:text-white transition-colors z-50"
+            className="lg:hidden p-2 text-white/80 hover:text-white transition-colors z-50"
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Abrir menu"
           >
@@ -137,11 +138,11 @@ export default function Navbar() {
               {/* Close button */}
               <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/6">
                 <Image
-                  src="/logo.png"
+                  src="/logo-navbar.png"
                   alt="Alvea Viagens"
-                  width={100}
-                  height={44}
-                  className="object-contain h-[38px] w-auto"
+                  width={116}
+                  height={52}
+                  className="object-contain h-[44px] w-auto"
                 />
                 <button
                   className="p-2 text-white/60 hover:text-white transition-colors"

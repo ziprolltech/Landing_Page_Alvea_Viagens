@@ -1,59 +1,73 @@
 'use client'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
-import { Coins, Banknote, Users, BarChart3, CheckCircle2, ArrowRight } from 'lucide-react'
-import PageHeader from '@/components/ui/PageHeader'
-import SectionReveal from '@/components/ui/SectionReveal'
+
+import { useCallback, useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { Banknote, Target, CheckCircle2, ArrowRight, Star } from 'lucide-react'
 import GlassCard from '@/components/ui/GlassCard'
+import SellMilesModal from '@/components/milhas/SellMilesModal'
+import ManagementModal from '@/components/milhas/ManagementModal'
 
-const SERVICES = [
+type ModalId = 'venda' | 'gestao'
+
+const SERVICES: {
+  id:       ModalId
+  icon:     typeof Banknote
+  title:    string
+  desc:     string
+  features: string[]
+  cta:      string
+}[] = [
   {
-    icon: Coins,
-    iconBg: 'bg-gold/15',
-    title: 'Compra de Milhas',
-    desc: 'Adquira milhas com as melhores taxas do mercado para emitir suas passagens com máximo custo-benefício.',
-    features: ['Programas LATAM Pass', 'Smiles Gol', 'TudoAzul', 'Outros programas'],
-    cta: 'Comprar Milhas',
-    accent: 'border-gold/20',
-  },
-  {
-    icon: Banknote,
-    iconBg: 'bg-sky-bright/15',
+    id:    'venda',
+    icon:  Banknote,
     title: 'Venda de Milhas',
-    desc: 'Converta suas milhas acumuladas em dinheiro com segurança, agilidade e as melhores taxas do mercado.',
-    features: ['Avaliação gratuita', 'Pagamento em 24h', 'Processo 100% seguro', 'Suporte completo'],
-    cta: 'Vender Milhas',
-    accent: 'border-sky-bright/20',
+    desc:  'Tem milhas acumuladas e quer transformá-las em dinheiro? Envie suas informações e nossa equipe avaliará sua oferta.',
+    features: [
+      'Avaliação da sua quantidade de milhas',
+      'Análise do programa de fidelidade',
+      'Processo simples e acompanhado pela equipe',
+      'Negociação diretamente com a Alvea',
+    ],
+    cta: 'Vender Minhas Milhas',
   },
   {
-    icon: Users,
-    iconBg: 'bg-gold/12',
-    title: 'Consultoria Especializada',
-    desc: 'Nossos especialistas analisam seu perfil e definem a estratégia de milhas ideal para seus objetivos.',
-    features: ['Análise gratuita do perfil', 'Plano personalizado', 'Acompanhamento contínuo', 'Resultados comprovados'],
-    cta: 'Agendar Consultoria',
-    accent: 'border-gold/20',
-  },
-  {
-    icon: BarChart3,
-    iconBg: 'bg-sky-bright/12',
-    title: 'Estratégias Inteligentes',
-    desc: 'Planejamento avançado para maximizar o rendimento dos seus programas de milhas e fidelidade.',
-    features: ['Acúmulo estratégico', 'Resgate otimizado', 'Múltiplos programas', 'Atualização constante'],
-    cta: 'Conhecer Estratégias',
-    accent: 'border-sky-bright/20',
+    id:    'gestao',
+    icon:  Target,
+    title: 'Gestão de Milhas',
+    desc:  'Você acumula pontos e milhas, mas não sabe qual é a melhor estratégia para aproveitar tudo isso? A Alvea pode analisar seu perfil, seus objetivos e seus programas para orientar as melhores decisões.',
+    features: [
+      'Estratégia personalizada',
+      'Orientação de acordo com seus objetivos',
+      'Análise dos seus programas e pontos',
+      'Estratégias para viajar, acumular, vender ou aproveitar melhor suas milhas',
+      'Acompanhamento especializado',
+    ],
+    cta: 'Conhecer a Gestão',
   },
 ]
 
-const STATS = [
-  { value: '100k+', label: 'Milhas negociadas' },
-  { value: 'R$5M+', label: 'em economia gerada' },
-  { value: '98%',   label: 'satisfação dos clientes' },
-]
+const EASE = [0.22, 1, 0.36, 1] as const
+const GOLD_GRADIENT = 'linear-gradient(135deg, #D4A853 0%, #ECC96A 50%, #E8824A 100%)'
 
 export default function MilhasPage() {
+  const reduce = useReducedMotion() ?? false
+  const [openModal, setOpenModal] = useState<ModalId | null>(null)
+  const closeModal = useCallback(() => setOpenModal(null), [])
+
+  /* Reduced motion: no travel — only short fades remain */
+  const rise = (distance: number) => (reduce ? 0 : distance)
+
+  const container = {
+    hidden: {},
+    show:   { transition: { staggerChildren: reduce ? 0.05 : 0.13, delayChildren: 0.12 } },
+  }
+  const item = {
+    hidden: { opacity: 0, y: rise(22) },
+    show:   { opacity: 1, y: 0, transition: { duration: reduce ? 0.3 : 0.75, ease: EASE } },
+  }
+
   return (
-    <main className="relative min-h-screen pt-28 pb-24 px-6">
+    <main className="relative min-h-screen pt-28 pb-24 px-6 overflow-hidden">
       {/* Ambient orbs */}
       <div
         className="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full pointer-events-none"
@@ -61,6 +75,7 @@ export default function MilhasPage() {
           background: 'radial-gradient(ellipse, rgba(26,95,160,0.09) 0%, transparent 70%)',
           filter: 'blur(70px)',
         }}
+        aria-hidden="true"
       />
       <div
         className="absolute bottom-60 left-0 w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -68,103 +83,88 @@ export default function MilhasPage() {
           background: 'radial-gradient(ellipse, rgba(212,168,83,0.05) 0%, transparent 70%)',
           filter: 'blur(65px)',
         }}
+        aria-hidden="true"
       />
 
-      <div className="max-w-7xl mx-auto">
-        {/* Page header */}
-        <SectionReveal className="mb-16">
-          <PageHeader
-            tag="Milhas"
-            title={
-              <>
-                Maximize o valor{' '}
-                <span className="text-gold-gradient">das suas milhas</span>
-              </>
-            }
-            subtitle="Estratégias personalizadas para cada perfil de viajante."
-          />
-        </SectionReveal>
+      <motion.div
+        className="relative max-w-6xl mx-auto"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        {/* ── Header: badge → headline → subheadline ── */}
+        <header className="text-center flex flex-col items-center gap-5 max-w-3xl mx-auto mb-14">
+          <motion.div
+            variants={item}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/25 bg-gold/10 backdrop-blur-sm"
+          >
+            <Star size={11} className="text-gold fill-gold" aria-hidden="true" />
+            <span className="text-gold text-[11px] font-semibold tracking-[0.12em] uppercase">Milhas</span>
+            <Star size={11} className="text-gold fill-gold" aria-hidden="true" />
+          </motion.div>
 
-        {/* Service cards */}
-        <SectionReveal delay={0.1}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {SERVICES.map((service) => {
-              const Icon = service.icon
-              return (
-                <GlassCard key={service.title} className={`p-8 flex flex-col gap-6 border ${service.accent}`}>
-                  {/* Icon */}
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${service.iconBg}`}>
-                    <Icon size={26} className="text-white" strokeWidth={1.7} />
+          <motion.h1
+            variants={item}
+            className="text-4xl md:text-5xl lg:text-[58px] font-black text-white leading-[1.06] tracking-[-0.025em]"
+          >
+            Maximize o valor <span className="text-gold-gradient">das suas milhas</span>
+          </motion.h1>
+
+          <motion.p variants={item} className="text-white/60 text-[17px] leading-relaxed font-light">
+            Estratégias inteligentes para transformar suas milhas em mais oportunidades.
+          </motion.p>
+        </header>
+
+        {/* ── Two services, equal weight ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {SERVICES.map((service) => {
+            const Icon = service.icon
+            return (
+              <motion.div key={service.id} variants={item} className="h-full">
+                <GlassCard hover={!reduce} className="p-7 sm:p-9 h-full flex flex-col gap-6 border-gold/20">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gold/15">
+                    <Icon size={26} className="text-gold" strokeWidth={1.8} aria-hidden="true" />
                   </div>
 
-                  {/* Title + desc */}
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-white text-[22px] font-bold">{service.title}</h3>
-                    <p className="text-white/55 text-[15px] leading-relaxed">{service.desc}</p>
+                  <div className="flex flex-col gap-2.5">
+                    <h2 className="text-white text-[24px] font-bold">{service.title}</h2>
+                    <p className="text-white/60 text-[15px] leading-relaxed">{service.desc}</p>
                   </div>
 
-                  {/* Features */}
-                  <ul className="flex flex-col gap-2.5">
+                  <ul className="flex flex-col gap-3">
                     {service.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2.5">
-                        <CheckCircle2 size={15} className="text-gold/60 shrink-0" strokeWidth={2} />
-                        <span className="text-white/60 text-[14px]">{feature}</span>
+                      <li key={feature} className="flex items-start gap-2.5">
+                        <CheckCircle2 size={16} className="text-gold/70 shrink-0 mt-[3px]" strokeWidth={2} aria-hidden="true" />
+                        <span className="text-white/70 text-[14px] leading-snug">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
-                  {/* CTA */}
-                  <Link href="/atendimento" className="mt-auto">
-                    <motion.button
-                      className="btn-shimmer flex items-center justify-center gap-2 w-full py-3 rounded-full text-[13.5px] font-semibold text-sky-deep"
-                      style={{ background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 50%, #E8824A 100%)' }}
-                      whileHover={{ scale: 1.03, y: -1 }}
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                    >
-                      {service.cta}
-                      <ArrowRight size={14} strokeWidth={2.2} />
-                    </motion.button>
-                  </Link>
+                  <motion.button
+                    type="button"
+                    onClick={() => setOpenModal(service.id)}
+                    aria-haspopup="dialog"
+                    className="btn-shimmer mt-auto flex min-h-[50px] w-full items-center justify-center gap-2 rounded-full px-6 text-[14px] font-semibold text-sky-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                    style={{ background: GOLD_GRADIENT }}
+                    whileHover={reduce ? undefined : { scale: 1.03, y: -1 }}
+                    whileTap={reduce ? undefined : { scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                  >
+                    {service.cta}
+                    <ArrowRight size={15} strokeWidth={2.2} aria-hidden="true" />
+                  </motion.button>
                 </GlassCard>
-              )
-            })}
-          </div>
-        </SectionReveal>
+              </motion.div>
+            )
+          })}
+        </div>
+      </motion.div>
 
-        {/* Stats section */}
-        <SectionReveal delay={0.15} className="mt-14">
-          <div
-            className="rounded-2xl border border-white/8 p-8 md:p-10"
-            style={{ background: 'rgba(255,255,255,0.03)', backdropFilter: 'blur(12px)' }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-white/8">
-              {STATS.map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center gap-2 text-center pt-6 md:pt-0 first:pt-0">
-                  <span className="text-gold text-4xl font-black tracking-tight">{stat.value}</span>
-                  <span className="text-white/45 text-[14px]">{stat.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </SectionReveal>
-
-        {/* Final CTA */}
-        <SectionReveal delay={0.18} className="mt-14 text-center">
-          <Link href="/atendimento">
-            <motion.button
-              className="btn-shimmer cta-glow inline-flex items-center gap-2.5 px-10 py-3.5 rounded-full text-[14px] font-semibold text-sky-deep"
-              style={{ background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 50%, #E8824A 100%)' }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            >
-              Fale com um especialista
-              <ArrowRight size={15} />
-            </motion.button>
-          </Link>
-        </SectionReveal>
-      </div>
+      {/* ── Questionnaires ── */}
+      <AnimatePresence>
+        {openModal === 'venda'  && <SellMilesModal  key="venda"  onClose={closeModal} />}
+        {openModal === 'gestao' && <ManagementModal key="gestao" onClose={closeModal} />}
+      </AnimatePresence>
     </main>
   )
 }

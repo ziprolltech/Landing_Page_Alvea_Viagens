@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
+import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Ticket, Star, ShieldCheck, TrendingUp, ArrowRight, Coins } from 'lucide-react'
 
@@ -19,7 +20,7 @@ const fadeIn = {
   show:   { opacity: 1, transition: { duration: 1, ease: 'easeOut' } },
 }
 
-function TrustBadge({ icon: Icon, value, label }: { icon: any; value: string; label: string }) {
+function TrustBadge({ icon: Icon, value, label }: { icon: React.ElementType; value: string; label: string }) {
   return (
     <motion.div
       variants={fadeUp}
@@ -110,53 +111,23 @@ export default function Hero() {
             <span className="text-white/82 font-medium">viajar mais pagando menos.</span>
           </motion.p>
 
-          {/* CTA buttons */}
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 mt-2">
-
-            {/* Primary — Emitir Passagem */}
-            <motion.button
-              className="btn-shimmer cta-glow group relative flex items-center gap-2.5 px-8 py-4 rounded-full text-[14px] font-bold tracking-wide text-sky-deep shadow-gold-lg"
-              style={{ background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 55%, #E8824A 100%)' }}
-              whileHover={{ scale: 1.06, y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 18 }}
-            >
-              <Ticket size={15} strokeWidth={2.5} />
-              Emitir Passagem
+          {/* CTA — Emitir Passagem → /destinos */}
+          <motion.div variants={fadeUp} className="flex justify-center w-full mt-2">
+            <Link href="/destinos" className="group block w-full sm:w-[460px] rounded-full">
               <motion.span
-                className="inline-flex"
-                initial={{ x: 0 }}
-                whileHover={{ x: 4 }}
-                transition={{ type: 'spring', stiffness: 500 }}
+                className="btn-shimmer cta-glow relative flex items-center justify-center gap-2.5 w-full px-8 py-4 rounded-full text-[14px] font-bold tracking-wide text-sky-deep shadow-gold-lg"
+                style={{ background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 55%, #E8824A 100%)' }}
+                whileHover={{ scale: 1.06, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 18 }}
               >
-                <ArrowRight size={14} strokeWidth={2.5} />
+                <Ticket size={15} strokeWidth={2.5} />
+                Emitir Passagem
+                <span className="inline-flex transition-transform duration-200 group-hover:translate-x-1">
+                  <ArrowRight size={14} strokeWidth={2.5} />
+                </span>
               </motion.span>
-            </motion.button>
-
-            {/* Secondary — Comprar Milhas */}
-            <motion.button
-              className="group relative flex items-center gap-2.5 px-8 py-4 rounded-full text-[14px] font-bold tracking-wide text-white border border-white/18 bg-white/[0.05] backdrop-blur-sm overflow-hidden"
-              whileHover={{ scale: 1.04, y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 18 }}
-            >
-              <motion.span
-                className="absolute inset-0 rounded-full"
-                style={{ background: 'radial-gradient(ellipse at center, rgba(212,168,83,0.1) 0%, transparent 70%)' }}
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-              />
-              <Coins size={15} strokeWidth={2.5} className="text-gold relative z-10" />
-              <span className="relative z-10">Comprar Milhas</span>
-              <motion.span
-                className="inline-flex relative z-10"
-                initial={{ x: 0 }}
-                whileHover={{ x: 4 }}
-                transition={{ type: 'spring', stiffness: 500 }}
-              >
-                <ArrowRight size={14} strokeWidth={2.5} className="text-gold" />
-              </motion.span>
-            </motion.button>
+            </Link>
           </motion.div>
 
           {/* Trust badges */}

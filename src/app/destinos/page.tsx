@@ -10,12 +10,13 @@ import BookingModal  from '@/components/booking/BookingModal'
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 type Destination = {
-  name:    string
-  country: string
-  desc:    string
-  miles:   string
-  photo:   string
-  color:   string
+  name:     string
+  country:  string
+  desc:     string
+  miles:    string
+  photo:    string
+  color:    string
+  iataCode: string
 }
 
 type Continent = {
@@ -35,48 +36,56 @@ const CONTINENTS: Continent[] = [
         desc: 'A cidade mais romântica do mundo', miles: '45.000',
         photo: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1400&q=90',
         color: 'from-indigo-900 to-purple-900',
+        iataCode: 'CDG',
       },
       {
         name: 'Roma', country: 'Itália',
         desc: 'Eternidade em cada monumento', miles: '44.000',
         photo: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1400&q=90',
         color: 'from-stone-900 to-amber-900',
+        iataCode: 'FCO',
       },
       {
         name: 'Lisboa', country: 'Portugal',
         desc: 'Charme europeu à beira do Atlântico', miles: '38.000',
         photo: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=1400&q=90',
         color: 'from-orange-900 to-rose-900',
+        iataCode: 'LIS',
       },
       {
         name: 'Londres', country: 'Reino Unido',
         desc: 'Tradição e modernidade lado a lado', miles: '46.000',
         photo: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1400&q=90',
         color: 'from-slate-900 to-blue-900',
+        iataCode: 'LHR',
       },
       {
         name: 'Santorini', country: 'Grécia',
         desc: 'O pôr do sol mais famoso do mundo', miles: '50.000',
         photo: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1400&q=90',
         color: 'from-blue-900 to-cyan-900',
+        iataCode: 'JTR',
       },
       {
         name: 'Barcelona', country: 'Espanha',
         desc: 'Arte, arquitetura e vida mediterrânea', miles: '43.000',
         photo: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1400&q=90',
         color: 'from-yellow-900 to-red-900',
+        iataCode: 'BCN',
       },
       {
         name: 'Amsterdã', country: 'Holanda',
         desc: 'Canais, tulipas e cultura vibrante', miles: '47.000',
         photo: 'https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?auto=format&fit=crop&w=1400&q=90',
         color: 'from-teal-900 to-green-900',
+        iataCode: 'AMS',
       },
       {
         name: 'Veneza', country: 'Itália',
         desc: 'A cidade mais única do planeta', miles: '45.000',
         photo: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?auto=format&fit=crop&w=1400&q=90',
         color: 'from-cyan-900 to-blue-900',
+        iataCode: 'VCE',
       },
     ],
   },
@@ -89,48 +98,56 @@ const CONTINENTS: Continent[] = [
         desc: 'A cidade que nunca dorme', miles: '42.000',
         photo: 'https://images.unsplash.com/photo-1490644658840-3f2e3f8c5625?auto=format&fit=crop&w=1400&q=90',
         color: 'from-slate-900 to-blue-900',
+        iataCode: 'JFK',
       },
       {
         name: 'Orlando', country: 'Estados Unidos',
         desc: 'Magia e aventura para a família', miles: '40.000',
-        photo: 'https://images.unsplash.com/photo-1575089976121-8ed7b2a54265?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1620055155785-2fc4acd747cb?auto=format&fit=crop&w=1400&q=90',
         color: 'from-sky-900 to-blue-900',
+        iataCode: 'MCO',
       },
       {
         name: 'Cancún', country: 'México',
         desc: 'Mar caribenho e cultura milenar', miles: '35.000',
         photo: 'https://images.unsplash.com/photo-1552074284-5e88ef1aef18?auto=format&fit=crop&w=1400&q=90',
         color: 'from-emerald-900 to-teal-900',
+        iataCode: 'CUN',
       },
       {
         name: 'Toronto', country: 'Canadá',
         desc: 'Cosmopolita, diversa e acolhedora', miles: '44.000',
-        photo: 'https://images.unsplash.com/photo-1517090186835-e348b621c9ca?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1509118796018-30cc4ce216f1?auto=format&fit=crop&w=1400&q=90',
         color: 'from-sky-900 to-slate-900',
+        iataCode: 'YYZ',
       },
       {
         name: 'Buenos Aires', country: 'Argentina',
         desc: 'O Paris da América do Sul', miles: '30.000',
         photo: 'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?auto=format&fit=crop&w=1400&q=90',
         color: 'from-rose-900 to-blue-900',
+        iataCode: 'EZE',
       },
       {
         name: 'Punta Cana', country: 'República Dominicana',
         desc: 'Praias paradisíacas do Caribe', miles: '32.000',
-        photo: 'https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1692017827893-f97d95397b49?auto=format&fit=crop&w=1400&q=90',
         color: 'from-teal-900 to-sky-900',
+        iataCode: 'PUJ',
       },
       {
         name: 'Los Angeles', country: 'Estados Unidos',
         desc: 'Sol, cultura e entretenimento', miles: '42.000',
         photo: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?auto=format&fit=crop&w=1400&q=90',
         color: 'from-orange-900 to-red-900',
+        iataCode: 'LAX',
       },
       {
         name: 'Miami', country: 'Estados Unidos',
         desc: 'Praias, arte e vida noturna', miles: '38.000',
         photo: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=90',
         color: 'from-cyan-900 to-blue-900',
+        iataCode: 'MIA',
       },
     ],
   },
@@ -143,36 +160,42 @@ const CONTINENTS: Continent[] = [
         desc: 'Tradição milenar e tecnologia do futuro', miles: '80.000',
         photo: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1400&q=90',
         color: 'from-rose-900 to-slate-900',
+        iataCode: 'NRT',
       },
       {
         name: 'Bangkok', country: 'Tailândia',
         desc: 'Templos dourados e sabores únicos', miles: '70.000',
-        photo: 'https://images.unsplash.com/photo-1508009603885-50cf7c8dd0d5?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=1400&q=90',
         color: 'from-amber-900 to-orange-900',
+        iataCode: 'BKK',
       },
       {
         name: 'Singapura', country: 'Singapura',
         desc: 'O futuro existe e está aqui', miles: '75.000',
         photo: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1400&q=90',
         color: 'from-blue-900 to-teal-900',
+        iataCode: 'SIN',
       },
       {
         name: 'Bali', country: 'Indonésia',
         desc: 'A ilha dos deuses e da serenidade', miles: '68.000',
         photo: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1400&q=90',
         color: 'from-emerald-900 to-green-900',
+        iataCode: 'DPS',
       },
       {
         name: 'Seul', country: 'Coreia do Sul',
         desc: 'Modernidade, K-culture e gastronomia', miles: '78.000',
-        photo: 'https://images.unsplash.com/photo-1517154421773-0855edd8b96a?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=1400&q=90',
         color: 'from-purple-900 to-blue-900',
+        iataCode: 'ICN',
       },
       {
         name: 'Maldivas', country: 'República das Maldivas',
         desc: 'Paraíso de águas cristalinas', miles: '75.000',
         photo: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=1400&q=90',
         color: 'from-teal-900 to-cyan-900',
+        iataCode: 'MLE',
       },
     ],
   },
@@ -185,18 +208,21 @@ const CONTINENTS: Continent[] = [
         desc: 'Luxo e modernidade sem limites', miles: '60.000',
         photo: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1400&q=90',
         color: 'from-amber-900 to-orange-900',
+        iataCode: 'DXB',
       },
       {
         name: 'Doha', country: 'Qatar',
         desc: 'A pérola do Golfo Pérsico', miles: '62.000',
-        photo: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1765046919689-7316a0d13df9?auto=format&fit=crop&w=1400&q=90',
         color: 'from-sky-900 to-blue-900',
+        iataCode: 'DOH',
       },
       {
         name: 'Abu Dhabi', country: 'Emirados Árabes Unidos',
         desc: 'Grandiosidade, arte e cultura árabe', miles: '62.000',
-        photo: 'https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1590075865003-e48277faa558?auto=format&fit=crop&w=1400&q=90',
         color: 'from-amber-900 to-yellow-900',
+        iataCode: 'AUH',
       },
     ],
   },
@@ -209,18 +235,21 @@ const CONTINENTS: Continent[] = [
         desc: 'Opera House, praias e vida ao ar livre', miles: '90.000',
         photo: 'https://images.unsplash.com/photo-1506374322094-6021fc3926f1?auto=format&fit=crop&w=1400&q=90',
         color: 'from-sky-900 to-blue-900',
+        iataCode: 'SYD',
       },
       {
         name: 'Melbourne', country: 'Austrália',
         desc: 'Cultura, gastronomia e arte urbana', miles: '90.000',
-        photo: 'https://images.unsplash.com/photo-1514395462421-8292ba098e95?auto=format&fit=crop&w=1400&q=90',
+        photo: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1400&q=90',
         color: 'from-purple-900 to-blue-900',
+        iataCode: 'MEL',
       },
       {
         name: 'Auckland', country: 'Nova Zelândia',
         desc: 'Natureza deslumbrante e hospitalidade', miles: '95.000',
         photo: 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1400&q=90',
         color: 'from-teal-900 to-slate-900',
+        iataCode: 'AKL',
       },
     ],
   },
@@ -370,7 +399,7 @@ export default function DestinosPage() {
 
   return (
     <>
-      <main className="relative min-h-screen pt-28 pb-24 px-6">
+      <main className="relative min-h-screen pt-28 pb-24 px-6 overflow-hidden">
 
         {/* Ambient orbs */}
         <div

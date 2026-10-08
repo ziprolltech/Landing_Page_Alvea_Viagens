@@ -4,6 +4,7 @@ import Hero             from '@/components/Hero'
 import LogoHeroBanner   from '@/components/LogoHeroBanner'
 import Benefits         from '@/components/home/Benefits'
 import HomeCTA          from '@/components/home/HomeCTA'
+import ScrollPlane      from '@/components/home/ScrollPlane'
 
 export default function Home() {
   return (
@@ -16,8 +17,10 @@ export default function Home() {
         <Hero />
       </div>
 
-      {/* ── Benefits ── */}
-      <Benefits />
+      {/* ── Benefits — the scroll-driven airplane flies over this section ── */}
+      <ScrollPlane>
+        <Benefits />
+      </ScrollPlane>
 
       {/* ── Quem Somos / Brand showcase ── */}
       <section className="relative py-24 lg:py-32 px-6 overflow-hidden bg-sky-abyss">
@@ -80,7 +83,7 @@ export default function Home() {
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4 mt-2">
               {[
-                { value: '50k+', label: 'Passagens emitidas'      },
+                { value: '1k+',  label: 'Passagens emitidas'      },
                 { value: '98%',  label: 'Satisfação dos clientes'  },
                 { value: '120+', label: 'Destinos disponíveis'     },
               ].map(({ value, label }) => (
