@@ -4,6 +4,16 @@ Chronological history of significant project changes.
 
 ---
 
+## [Post-deploy fixes — mobile layout and hero statistic] — 2026-10-08
+
+- **Hero statistic** (`src/components/Hero.tsx`): "50k+" → "1k+" for "Passagens emitidas", matching the "Quem Somos" block changed earlier.
+- **Atendimento was wider than the phone screen** (`src/app/atendimento/page.tsx`): a decorative 700px glow was positioned directly in `<main>`, which made the page 508–543px wide on a 320–390px screen. `overflow-x: hidden` on `body` hid the scrollbar but mobile browsers still laid the page out at that width and zoomed out — hence the small content and the menu icon far from the edge. The two glows now sit inside a clipped layer (`absolute inset-0 overflow-hidden`). No other page had this problem (all measured).
+- **Home "Pronto para decolar?" buttons** (`src/components/home/HomeCTA.tsx`): on phones both buttons now share one width (up to 300px) and one height (50px), with centred content; from `sm` they sit side by side as before.
+- **Gold button disappearing when zooming on a phone** (`src/app/template.tsx`): the page-transition wrapper kept `filter: blur(0px)` and a transform after its entrance, so every page stayed inside one filtered layer. That is the likely cause — a filtered layer of a whole page is not repainted reliably when a phone zooms in, and the gold button repaints continuously (shimmer and glow). The wrapper now clears `filter` and `transform` when the entrance ends. **Not reproduced and not confirmed on a real phone**: the desktop test browser has no pinch-zoom.
+- Verified at 320, 360, 375, 390, 430, 768 and 1366px: no horizontal overflow on any page; menu icon 29px from the right edge on Atendimento; cards inside the margins; buttons equal on phones. `tsc`, ESLint and the production build pass.
+
+---
+
 ## [First production deployment — audit and preparation] — 2026-10-08
 
 - **Security:** Next.js 15.3.3 → 15.5.27 and `eslint-config-next` to match (`npm audit fix`, no breaking changes). This closes the critical and high advisories reported against Next.js; one PostCSS advisory inside Next.js remains (its fix is a breaking upgrade).

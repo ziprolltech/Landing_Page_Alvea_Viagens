@@ -68,10 +68,11 @@ export default function HomeCTA() {
         </p>
 
         {/* Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-2">
-          <Link href="/destinos">
+        {/* On phones both buttons share one width and height; from `sm` they sit side by side at their own width */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full max-w-[300px] sm:w-auto sm:max-w-none">
+          <Link href="/destinos" className="block">
             <motion.button
-              className="btn-shimmer cta-glow flex items-center gap-2.5 px-8 py-3.5 rounded-full text-[14px] font-semibold text-sky-deep"
+              className="btn-shimmer cta-glow flex items-center justify-center gap-2.5 w-full sm:w-auto min-h-[50px] px-8 py-2.5 rounded-full text-[14px] font-semibold text-sky-deep"
               style={{
                 background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 50%, #E8824A 100%)',
               }}
@@ -85,9 +86,9 @@ export default function HomeCTA() {
             </motion.button>
           </Link>
 
-          <Link href="/atendimento">
+          <Link href="/atendimento" className="block">
             <motion.button
-              className="flex items-center gap-2.5 px-8 py-3.5 rounded-full text-[14px] font-semibold text-white/80 hover:text-white border border-white/15 hover:border-gold/30 bg-white/[0.04] backdrop-blur-sm transition-colors duration-200"
+              className="flex items-center justify-center gap-2.5 w-full sm:w-auto min-h-[50px] px-8 py-2.5 rounded-full text-[14px] font-semibold text-white/80 hover:text-white border border-white/15 hover:border-gold/30 bg-white/[0.04] backdrop-blur-sm transition-colors duration-200"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}

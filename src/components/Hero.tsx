@@ -135,7 +135,7 @@ export default function Hero() {
             variants={container}
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 w-full max-w-3xl"
           >
-            <TrustBadge icon={TrendingUp}  value="50k+"   label="Passagens emitidas"   />
+            <TrustBadge icon={TrendingUp}  value="1k+"    label="Passagens emitidas"   />
             <TrustBadge icon={ShieldCheck}  value="100%"   label="Transações seguras"   />
             <TrustBadge icon={Star}         value="4.9/5"  label="Avaliação dos clientes" />
             <TrustBadge icon={Coins}        value="R$10M+" label="Milhas economizadas"  />

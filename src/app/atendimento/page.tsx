@@ -76,23 +76,27 @@ export default function AtendimentoPage() {
 
   return (
     <main className="relative min-h-screen pt-28 pb-24 px-6">
-      {/* Ambient orbs */}
-      <div
-        className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse, rgba(26,95,160,0.08) 0%, transparent 70%)',
-          filter: 'blur(70px)',
-        }}
-      />
-      <div
-        className="absolute bottom-40 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse, rgba(212,168,83,0.05) 0%, transparent 70%)',
-          filter: 'blur(65px)',
-        }}
-      />
+      {/* Ambient orbs — kept inside a clipped layer: they are wider than a phone
+          screen (700px) and would otherwise make the whole page wider than the
+          viewport, which mobile browsers answer by zooming the page out. */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full"
+          style={{
+            background: 'radial-gradient(ellipse, rgba(26,95,160,0.08) 0%, transparent 70%)',
+            filter: 'blur(70px)',
+          }}
+        />
+        <div
+          className="absolute bottom-40 right-0 w-[400px] h-[400px] rounded-full"
+          style={{
+            background: 'radial-gradient(ellipse, rgba(212,168,83,0.05) 0%, transparent 70%)',
+            filter: 'blur(65px)',
+          }}
+        />
+      </div>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto">
         {/* Page header */}
         <SectionReveal className="mb-16">
           <PageHeader
