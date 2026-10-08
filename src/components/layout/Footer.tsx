@@ -66,7 +66,7 @@ export default function Footer() {
             <h3 className="text-white/70 text-[13px] font-semibold tracking-[0.10em] uppercase">
               Contato
             </h3>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col items-start gap-3">
               <a
                 href="mailto:alveaviagens@gmail.com"
                 className="text-white/40 hover:text-gold text-[14px] transition-colors duration-200"
