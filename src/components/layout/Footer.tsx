@@ -48,7 +48,7 @@ export default function Footer() {
             <h3 className="text-white/70 text-[13px] font-semibold tracking-[0.10em] uppercase">
               Links Rápidos
             </h3>
-            <nav className="flex flex-col gap-3">
+            <nav className="flex flex-col items-start gap-3">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.label}
