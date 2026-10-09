@@ -5,7 +5,6 @@ import OffersGroupContent from '@/components/grupo-ofertas/OffersGroupContent'
 import { OFFERS_GROUP_VIDEO_FILE } from '@/lib/config/links'
 
 export const metadata: Metadata = {
-  title: 'Grupo de Ofertas | Alvea Viagens',
   description:
     'Receba promoções e oportunidades de viagem da Alvea Viagens diretamente no WhatsApp.',
   openGraph: {

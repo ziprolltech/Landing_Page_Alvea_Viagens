@@ -4,6 +4,15 @@ Chronological history of significant project changes.
 
 ---
 
+## [Favicon, fixed tab title, CNPJ in the footer] — 2026-10-09
+
+- **Favicon:** `public/favicon-alvea.png` (1254×1254 PNG, supplied by the client) is declared in the root layout's `metadata.icons` (icon, shortcut, apple). There was no favicon before and there is no `favicon.ico`.
+- **Tab title:** always "Alvea Viagens". The root layout sets it and the two pages that overrode it (`/experiencias`, `/grupo-de-ofertas`) no longer set a `title`. Descriptions, keywords and Open Graph titles are unchanged.
+- **Footer** (`src/components/layout/Footer.tsx`): "CNPJ: 59.070.673/0001-60" added once, in the bottom bar, centred under the tagline. It is the shared footer, so it shows on every page.
+- **Footer links** (2026-10-08): the quick links and the two contact links are now only as wide as their text (`items-start` on their flex columns), so empty space beside them is not clickable.
+
+---
+
 ## [Post-deploy fixes — mobile layout and hero statistic] — 2026-10-08
 
 - **Hero statistic** (`src/components/Hero.tsx`): "50k+" → "1k+" for "Passagens emitidas", matching the "Quem Somos" block changed earlier.

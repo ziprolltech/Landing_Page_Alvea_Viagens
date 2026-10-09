@@ -12,7 +12,13 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Alvea Viagens — Transformamos Milhas em Experiências Inesquecíveis',
+  /* The browser tab always reads "Alvea Viagens": pages do not set their own title. */
+  title: 'Alvea Viagens',
+  icons: {
+    icon:     [{ url: '/favicon-alvea.png', type: 'image/png' }],
+    shortcut: '/favicon-alvea.png',
+    apple:    '/favicon-alvea.png',
+  },
   description:
     'Passagens aéreas, milhas e oportunidades exclusivas para você viajar mais pagando menos.',
   keywords: [

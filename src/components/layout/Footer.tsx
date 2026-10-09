@@ -141,6 +141,7 @@ export default function Footer() {
           <p className="text-center text-white/22 text-[12px]">
             Alvea Viagens — Especialistas em milhas e passagens aéreas premium
           </p>
+          <p className="mt-2 text-center text-white/40 text-[12px]">CNPJ: 59.070.673/0001-60</p>
         </div>
       </div>
     </footer>

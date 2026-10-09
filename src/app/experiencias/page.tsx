@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import JourneyExperience from '@/components/experiencias/JourneyExperience'
 
 export const metadata: Metadata = {
-  title: 'Experiências — ALVEA JOURNEY | Alvea Viagens',
   description:
     'ALVEA JOURNEY: uma viagem antes da viagem. Role a página e embarque em uma experiência interativa pelo mundo, pelos destinos e pelo jeito Alvea de pensar cada viagem.',
   openGraph: {
