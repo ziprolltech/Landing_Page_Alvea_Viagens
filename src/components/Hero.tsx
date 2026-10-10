@@ -24,7 +24,7 @@ function TrustBadge({ icon: Icon, value, label }: { icon: React.ElementType; val
   return (
     <motion.div
       variants={fadeUp}
-      className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm"
+      className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-white/10 bg-white/[0.04] lg:backdrop-blur-sm"
     >
       <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-gold/15 shrink-0">
         <Icon size={16} className="text-gold" />
@@ -38,7 +38,8 @@ function TrustBadge({ icon: Icon, value, label }: { icon: React.ElementType; val
 }
 
 function Orb({ className }: { className: string }) {
-  return <div className={`absolute rounded-full blur-[80px] pointer-events-none ${className}`} />
+  /* below `lg` the soft edge comes from a mask instead of an 80px blur filter */
+  return <div className={`absolute rounded-full blur-[80px] max-lg:blur-none max-lg:[-webkit-mask-image:radial-gradient(closest-side,#000_20%,transparent)] max-lg:[mask-image:radial-gradient(closest-side,#000_20%,transparent)] pointer-events-none ${className}`} />
 }
 
 export default function Hero() {
@@ -77,7 +78,7 @@ export default function Hero() {
           {/* Eyebrow badge */}
           <motion.div
             variants={fadeIn}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/22 bg-gold/8 backdrop-blur-sm"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold/22 bg-gold/8 lg:backdrop-blur-sm"
           >
             <Star size={11} className="text-gold fill-gold" />
             <span className="text-gold text-[11px] font-semibold tracking-[0.12em] uppercase">

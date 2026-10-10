@@ -129,6 +129,35 @@ function useBreathingClouds(): boolean {
   return breathing
 }
 
+/* A w×h ellipse blurred by `blur` px, as a plain radial gradient */
+function erf(x: number): number {
+  const t = 1 / (1 + 0.3275911 * x)
+  return 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x)
+}
+
+function softEllipse(def: BlobDef, color: string): React.CSSProperties {
+  const spread = def.blur * 2
+  const edge = (size: number) => size / 2 / (size / 2 + spread)          // where the original edge falls
+  const core = (size: number) => Math.max(0, size / 2 - spread) / (size / 2 + spread)
+  /* a blur wider than the shape also dilutes its centre */
+  const peak = erf(def.w / 2 / (def.blur * Math.SQRT2)) * erf(def.h / 2 / (def.blur * Math.SQRT2))
+  const rgb = color.replace('rgb(', '').replace(')', '')
+  const pct = (n: number) => `${(n * 100).toFixed(1)}%`
+  const e = (edge(def.w) + edge(def.h)) / 2
+  const c = (core(def.w) + core(def.h)) / 2
+  return {
+    position:   'absolute',
+    width:      def.w + spread * 2,
+    height:     def.h + spread * 2,
+    top:        def.top,
+    left:       def.left,
+    marginTop:  -spread,
+    marginLeft: -spread,
+    opacity:    +(def.op * peak).toFixed(4),
+    background: `radial-gradient(ellipse closest-side, rgba(${rgb},1) ${pct(c)}, rgba(${rgb},0.5) ${pct(e)}, rgba(${rgb},0) 100%)`,
+  }
+}
+
 /* ── Single cloud blob component ── */
 function Blob({ def, breathing }: { def: BlobDef; breathing: boolean }) {
   const type = def.type ?? 'white'
@@ -144,8 +173,10 @@ function Blob({ def, breathing }: { def: BlobDef; breathing: boolean }) {
     opacity:      def.op,
   }
 
-  /* Still cloud: an ordinary element, painted once with the rest of its layer */
-  if (!breathing) return <div style={style} />
+  /* Still cloud (phones): no filter at all. A blurred ellipse is drawn as the
+     radial gradient it looks like, which costs nothing to repaint — blur
+     filters this large are what breaks painting when a phone zooms in. */
+  if (!breathing) return <div style={softEllipse(def, BG[type])} />
 
   return (
     <motion.div
@@ -210,7 +241,7 @@ export default function CloudBackground() {
 
       {/* ── Directional sunlight scatter — upper-right, cold blue-white ── */}
       <div
-        className="absolute"
+        className="absolute max-lg:!blur-none"
         style={{
           top:        '-8%',
           right:      '5%',
@@ -232,7 +263,7 @@ export default function CloudBackground() {
 
       {/* ── Subtle gold warmth — brand atmosphere ── */}
       <div
-        className="absolute animate-pulse-soft"
+        className="absolute animate-pulse-soft max-lg:!blur-none"
         style={{
           top:        '18%',
           left:       '28%',

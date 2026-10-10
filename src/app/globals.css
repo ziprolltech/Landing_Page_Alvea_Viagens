@@ -100,6 +100,25 @@ body {
 }
 .cta-glow { animation: glowPulse 3s ease-in-out infinite; }
 
+/* Touch screens: the glow is steady and the shimmer moves by transform.
+   Animating box-shadow and background-position repaints the button on every
+   frame; on a zoomed-in phone the browser cannot keep up and the top of the
+   page flickers (the button was even drawn cut in half). */
+@keyframes shimmerSlide {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+@media (pointer: coarse) {
+  .cta-glow {
+    animation: none;
+    box-shadow: 0 0 28px rgba(212,168,83,0.45), 0 0 55px rgba(212,168,83,0.2);
+  }
+  .btn-shimmer::after {
+    background-size: 100% 100%;
+    animation: shimmerSlide 3.5s linear infinite;
+  }
+}
+
 /* ─── Underline hover for nav links ─── */
 .nav-link-underline::after {
   content: '';

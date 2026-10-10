@@ -4,6 +4,23 @@ Chronological history of significant project changes.
 
 ---
 
+## [Home hero flickering when zooming on a phone] — 2026-10-10
+
+**Report (with a screenshot from Instagram's in-app browser):** pinch-zooming at the top of the home page makes the whole first screen flicker; the gold button is drawn cut in half along a straight line — a GPU painting failure, not a layout problem. Making the clouds still (entry below) was not enough.
+
+**Cause (likely; pinch-zoom cannot be reproduced in the desktop test browser):** the first screen combined large blur filters with things that repaint on every frame. When a phone zooms in, everything is re-rasterised at a higher scale, and blurs of 28–178px over shapes up to 1400px wide cannot be redrawn in time.
+
+**Fix — phones only (below `lg` / touch); desktop unchanged:**
+
+- `CloudBackground.tsx`: each cloud is drawn as the radial gradient a blurred ellipse looks like, with no `filter` at all; the two ambient glows lose their extra blur.
+- `Hero.tsx`: the three large glows get their soft edge from a mask instead of an 80px blur; the badge and the four statistic cards no longer use `backdrop-filter`.
+- `AviationTrail.tsx`: the flight path and the plane are drawn without SVG blur filters (the plane moves every frame).
+- `globals.css`: on touch screens the gold buttons' glow is steady instead of an animated `box-shadow`, and the shimmer moves by `transform` instead of `background-position`.
+
+Measured on the production build at 360, 390 and 430px: 0 blur filters, 0 backdrop filters and 0 SVG filters in the first screen (before: 28, 5 and 2). Side by side with the live site the hero looks the same. 1920px: clouds, backdrop filters and SVG filters as before.
+
+---
+
 ## [Home hero flickering on phones] — 2026-10-10
 
 **Report:** opened from the Instagram bio link on a phone, the top of the home page flickers.

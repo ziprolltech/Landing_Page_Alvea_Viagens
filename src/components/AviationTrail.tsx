@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* ──────────────────────────────────────────────────────────────
    Airplane SVG — minimalist side-view facing right
@@ -48,6 +48,17 @@ function AirplaneSVG() {
 export default function AviationTrail() {
   const planeRef = useRef<SVGGElement>(null)
   const ctxRef   = useRef<{ revert: () => void } | null>(null)
+
+  /* SVG blur filters are repainted on every frame the plane moves. Phones get
+     the same drawing without them; large screens keep the glow. */
+  const [glow, setGlow] = useState(false)
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 1024px) and (pointer: fine)')
+    const update = () => setGlow(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -144,7 +155,7 @@ export default function AviationTrail() {
           fill="none"
           stroke="rgba(212,168,83,0.15)"
           strokeWidth="4"
-          filter="url(#path-glow)"
+          filter={glow ? 'url(#path-glow)' : undefined}
           mask="url(#path-mask)"
         />
 
@@ -162,7 +173,7 @@ export default function AviationTrail() {
         {/* ── Animated airplane group ── */}
         <g
           ref={planeRef}
-          filter="url(#plane-glow)"
+          filter={glow ? 'url(#plane-glow)' : undefined}
           style={{ transformOrigin: '0px 0px' }}
         >
           <AirplaneSVG />
