@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -104,22 +104,52 @@ const STARS = Array.from({ length: 45 }, (_, i) => ({
   dur:   3 + (i % 3) * 0.8,
 }))
 
+/* ── Should the clouds "breathe"? ─────────────────────────────────────────────
+   Only on large screens with a mouse. On phones the clouds are drawn still.
+
+   Why: each animated blob is its own GPU layer (will-change) holding a blurred
+   surface far larger than a phone screen — up to 1400px wide plus the blur
+   radius, times the device pixel ratio — and there are 23 of them, each updated
+   on every frame, forever. Phones, and in-app browsers such as Instagram's in
+   particular, have a small graphics-memory budget; when it is exceeded the
+   browser keeps discarding and redrawing those layers, which shows as the top
+   of the page flickering. The movement itself is ±1.5% over two minutes, so a
+   still cloud looks the same.
+
+   Starts `false` so the server and the first client render agree. */
+function useBreathingClouds(): boolean {
+  const [breathing, setBreathing] = useState(false)
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 1024px) and (pointer: fine)')
+    const update = () => setBreathing(query.matches)
+    update()
+    query.addEventListener('change', update)
+    return () => query.removeEventListener('change', update)
+  }, [])
+  return breathing
+}
+
 /* ── Single cloud blob component ── */
-function Blob({ def }: { def: BlobDef }) {
+function Blob({ def, breathing }: { def: BlobDef; breathing: boolean }) {
   const type = def.type ?? 'white'
+  const style: React.CSSProperties = {
+    position:     'absolute',
+    width:        def.w,
+    height:       def.h,
+    top:          def.top,
+    left:         def.left,
+    borderRadius: def.br ?? '50%',
+    background:   BG[type],
+    filter:       `blur(${def.blur}px)`,
+    opacity:      def.op,
+  }
+
+  /* Still cloud: an ordinary element, painted once with the rest of its layer */
+  if (!breathing) return <div style={style} />
+
   return (
     <motion.div
-      style={{
-        position:     'absolute',
-        width:        def.w,
-        height:       def.h,
-        top:          def.top,
-        left:         def.left,
-        borderRadius: def.br ?? '50%',
-        background:   BG[type],
-        filter:       `blur(${def.blur}px)`,
-        willChange:   'transform, opacity',
-      }}
+      style={{ ...style, willChange: 'transform, opacity' }}
       animate={{
         opacity: [
           def.op,
@@ -145,6 +175,7 @@ function Blob({ def }: { def: BlobDef }) {
 export default function CloudBackground() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const breathing = useBreathingClouds()
 
   /* Parallax — far layer moves slower, near layer moves faster */
   const yFar   = useTransform(scrollYProgress, [0, 1], ['0%',  '22%'])
@@ -232,12 +263,12 @@ export default function CloudBackground() {
 
       {/* ── Far cloud layer (parallax slower) ── */}
       <motion.div className="absolute inset-0" style={{ y: yFar, opacity: opaque }}>
-        {farBlobs.map((b) => <Blob key={b.id} def={b} />)}
+        {farBlobs.map((b) => <Blob key={b.id} def={b} breathing={breathing} />)}
       </motion.div>
 
       {/* ── Near cloud layer (parallax faster) ── */}
       <motion.div className="absolute inset-0" style={{ y: yNear, opacity: opaque }}>
-        {nearBlobs.map((b) => <Blob key={b.id} def={b} />)}
+        {nearBlobs.map((b) => <Blob key={b.id} def={b} breathing={breathing} />)}
       </motion.div>
 
       {/* ── Upper vignette — deepens the near-space feel ── */}

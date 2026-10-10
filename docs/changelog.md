@@ -4,6 +4,18 @@ Chronological history of significant project changes.
 
 ---
 
+## [Home hero flickering on phones] — 2026-10-10
+
+**Report:** opened from the Instagram bio link on a phone, the top of the home page flickers.
+
+**Most likely cause (not reproduced — no phone or Instagram in-app browser available):** the hero's cloud background. Each of its 23 clouds was a Framer Motion element with `will-change`, so each was its own GPU layer holding a blurred surface far larger than a phone screen (up to 1400px wide plus a 28–178px blur, times the device pixel ratio), and every one of them was updated on every frame, forever. That is more graphics memory than phones — and in-app browsers in particular — allow a page; when the budget is exceeded the browser keeps discarding and redrawing layers, which shows as flicker. No render loop, state loop or hydration error was found: the console is clean and nothing re-renders repeatedly.
+
+**Fix** (`src/components/CloudBackground.tsx`): the clouds animate only on screens ≥1024px with a mouse (`(min-width: 1024px) and (pointer: fine)`). Everywhere else they are ordinary still elements at the same position, size, colour, blur and opacity — no `will-change`, no per-frame work. The animation was a ±1.5% scale and ±4px drift over two minutes, so the still version looks the same. Desktop is unchanged. The server renders the still version, so there is no hydration mismatch.
+
+Verified in Chrome on the production build at 360, 390 and 430px (23 clouds, none with its own layer, same opacities) and at 1920px (23 animated clouds as before); CTA still links to `/destinos`; no console errors; `tsc`, ESLint and build pass.
+
+---
+
 ## [Favicon, fixed tab title, CNPJ in the footer] — 2026-10-09
 
 - **Favicon:** `public/favicon-alvea.png` (1254×1254 PNG, supplied by the client) is declared in the root layout's `metadata.icons` (icon, shortcut, apple). There was no favicon before and there is no `favicon.ico`.
