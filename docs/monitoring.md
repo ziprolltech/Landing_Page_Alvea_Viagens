@@ -56,17 +56,19 @@ A parte de cima do resultado ("Descubra o que seus usuários reais estão vivenc
 
 Lighthouse 12, perfil celular, página inicial em produção, uma execução de cada.
 
-| Indicador | Antes (2026-10-13) | Depois |
+| Indicador | Antes | Depois (deploy `925bb49`) |
 |---|---|---|
-| Desempenho | 68 | _a medir após o deploy_ |
-| Acessibilidade | 96 | |
-| Boas práticas | 100 | |
-| SEO | 100 | |
-| FCP | 1,9 s | |
-| LCP | 10,6 s | |
-| TBT | 40 ms | |
-| CLS | 0 | |
-| Peso total | 1.986 KB | |
+| Desempenho | 68 | 86 |
+| Acessibilidade | 96 | 96 |
+| Boas práticas | 100 | 100 |
+| SEO | 100 | 100 |
+| FCP | 1,9 s | 2,2 s |
+| LCP | 10,6 s | 3,4 s |
+| TBT | 40 ms | 60 ms |
+| CLS | 0 | 0 |
+| Peso total | 1.986 KB | 514 KB |
+
+Medido em 2026-10-13. A melhora vem de o favicon de 1,5 MB não ser mais baixado. As pequenas diferenças em FCP e TBT estão dentro da variação normal entre duas execuções. O LCP de 3,4 s ainda fica acima do alvo de 2,5 s nesse perfil de celular lento; o motivo é o item 1 abaixo. Nenhum erro apareceu no console do navegador durante o teste.
 
 ### Gargalos conhecidos
 
