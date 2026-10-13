@@ -4,6 +4,35 @@ Chronological history of significant project changes.
 
 ---
 
+## [Launch readiness — SEO, analytics with consent, conversion events] — 2026-10-13
+
+**Summary:** technical SEO completed, Google Analytics 4 prepared behind a real consent banner, business events wired, operating guides written. Diagnosis and decisions: `launch-readiness-audit-2026-10.md`.
+
+### What changed
+- **SEO:** `robots.txt`, `sitemap.xml`, `metadataBase`, a canonical URL and its own description on every page, Open Graph + Twitter card with a share image, JSON-LD (`TravelAgency` + `WebSite`, verifiable data only). `/passagens` is `noindex`. Canonical host is `https://www.alveaviagens.com.br`. The tab title stays `Alvea Viagens` everywhere.
+- **Icons:** the favicon artwork is served at 48/192/180 px plus `favicon.ico` instead of the 1.5 MB original (kept in `public/`).
+- **404 page** in Portuguese.
+- **Analytics:** GA4 loader gated by `NEXT_PUBLIC_GA_MEASUREMENT_ID` and by the visitor's consent. With no ID — the state at this deployment — nothing is loaded and no banner is shown. No Google Tag Manager.
+- **Events:** `flight_request_click`, `destination_interest`, `flight_request_whatsapp`, `contact_form_submit`, `miles_form_submit`, `offer_group_click`, `whatsapp_click`, `email_click`, `instagram_click`. No personal data in any parameter.
+- **Privacy fix:** the final WhatsApp button of the /milhas questionnaires no longer carries the typed name and phone in its own `href`; the full address is opened on click. Behaviour for the visitor is the same.
+- **Headers:** four baseline security headers; one-day cache for `/icons`, `/images`, `/videos`.
+
+### Files
+- New: `src/lib/config/site.ts`, `src/lib/seo/page-metadata.ts`, `src/lib/analytics/*`, `src/components/analytics/*`, `src/components/seo/JsonLd.tsx`, `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/not-found.tsx`, `src/app/{atendimento,destinos,milhas,passagens}/layout.tsx`, `scripts/build-brand-images.mjs`, `public/og-image.png`, `public/favicon.ico`, `public/icons/*`
+- Changed: `src/app/layout.tsx`, `next.config.ts`, the two pages with their own metadata, and the components that hold tracked links or forms (`Hero`, `HomeCTA`, `JourneyFinale`, `Footer`, `BookingModal`, `MilesModal`, `SellMilesModal`, `ManagementModal`, `atendimento/page`, `destinos/page`)
+- Docs (in Portuguese, because they are step-by-step guides for the site owner): `seo.md`, `analytics.md`, `search-console.md`, `marketing-tracking.md`, `monitoring.md`, `launch-readiness-audit-2026-10.md`; `deployment.md` updated
+
+### Verified
+- `tsc`, `eslint`, `next build` clean, with and without a measurement ID.
+- Generated HTML of every route checked for title, description, canonical, robots, share tags and JSON-LD.
+- Consent and events exercised in headless Chrome against the local build, with every request to Google blocked: nothing loads before "Aceitar"; each action fires its event once; no typed data reaches the events; refusal stops everything.
+- **Not verified:** reception of data by a real GA4 property (no ID exists yet), `flight_request_whatsapp` and `miles_form_submit` (read in code only), Search Console (not set up), any real phone.
+
+### Depends on the owner
+Create the GA4 property and set the ID in Vercel; verify the domain in Search Console and submit the sitemap; decide on a privacy policy; confirm the Vercel plan allows commercial use.
+
+---
+
 ## [Home hero flickering when zooming on a phone] — 2026-10-10
 
 **Report (with a screenshot from Instagram's in-app browser):** pinch-zooming at the top of the home page makes the whole first screen flicker; the gold button is drawn cut in half along a straight line — a GPU painting failure, not a layout problem. Making the clouds still (entry below) was not enough.
