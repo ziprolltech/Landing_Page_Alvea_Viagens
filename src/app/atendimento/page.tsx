@@ -6,6 +6,7 @@ import PageHeader from '@/components/ui/PageHeader'
 import SectionReveal from '@/components/ui/SectionReveal'
 import GlassCard from '@/components/ui/GlassCard'
 import { buildWhatsAppUrl } from '@/lib/config/links'
+import { track } from '@/lib/analytics/gtag'
 import {
   buildContactRequestMessage, validateContactRequest,
   type ContactRequest, type ContactRequestErrors,
@@ -71,6 +72,9 @@ export default function AtendimentoPage() {
     const found = validateContactRequest(form)
     setErrors(found)
     if (Object.keys(found).length > 0) return
+    /* Analytics: the fact that the form was used — never what was typed */
+    track('contact_form_submit', { form_name: 'atendimento' })
+    track('whatsapp_click', { link_location: 'atendimento_form' })
     window.open(buildWhatsAppUrl(buildContactRequestMessage(form)), '_blank', 'noopener,noreferrer')
   }
 
@@ -128,6 +132,7 @@ export default function AtendimentoPage() {
                   <p className="text-white/65 text-[14px] font-medium">{method.info}</p>
                   <a
                     href={method.href}
+                    data-track-location="atendimento_card"
                     className="text-gold text-[13.5px] font-medium hover:text-gold-light transition-colors duration-200"
                   >
                     {method.cta}

@@ -8,6 +8,7 @@ import {
 import MilesModal, { BackButton, ContinueButton, WhatsAppButton } from './MilesModal'
 import { ChoiceGroup, TextField } from './FormFields'
 import { buildWhatsAppUrl } from '@/lib/config/links'
+import { track } from '@/lib/analytics/gtag'
 import {
   QUESTIONS, QUESTION_STEPS, questionsBetween, isAnswered,
   type Answers, type Question,
@@ -155,7 +156,11 @@ export default function ManagementModal({ onClose }: { onClose: () => void }) {
         <>
           {step > STEP_INTRO && <BackButton onClick={back} />}
           {isReview
-            ? <WhatsAppButton href={buildWhatsAppUrl(buildManagementMessage(contact, answers))} label="Enviar para a Alvea" />
+            ? <WhatsAppButton
+                href={buildWhatsAppUrl(buildManagementMessage(contact, answers))}
+                label="Enviar para a Alvea"
+                onSend={() => track('miles_form_submit', { form_type: 'gestao' })}
+              />
             : <ContinueButton onClick={next} label={step === STEP_INTRO ? 'Começar o questionário' : 'Continuar'} />}
         </>
       }

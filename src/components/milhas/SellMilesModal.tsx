@@ -5,6 +5,7 @@ import MilesModal, { BackButton, ContinueButton, WhatsAppButton } from './MilesM
 import { TextField } from './FormFields'
 import ProgramCombobox from './ProgramCombobox'
 import { buildWhatsAppUrl } from '@/lib/config/links'
+import { track } from '@/lib/analytics/gtag'
 import {
   buildSellMilesMessage, formatMiles, formatPhone, isValidPhone,
 } from '@/lib/milhas/whatsapp-messages'
@@ -113,7 +114,11 @@ export default function SellMilesModal({ onClose }: { onClose: () => void }) {
         <>
           {step > 0 && <BackButton onClick={back} />}
           {isLast
-            ? <WhatsAppButton href={buildWhatsAppUrl(message)} label="Enviar para a Alvea" />
+            ? <WhatsAppButton
+                href={buildWhatsAppUrl(message)}
+                label="Enviar para a Alvea"
+                onSend={() => track('miles_form_submit', { form_type: 'venda' })}
+              />
             : <ContinueButton onClick={next} />}
         </>
       }

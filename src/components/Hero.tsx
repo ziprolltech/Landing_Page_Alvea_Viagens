@@ -114,7 +114,7 @@ export default function Hero() {
 
           {/* CTA — Emitir Passagem → /destinos */}
           <motion.div variants={fadeUp} className="flex justify-center w-full mt-2">
-            <Link href="/destinos" className="group block w-full sm:w-[460px] rounded-full">
+            <Link href="/destinos" data-track="flight_request_click" data-track-location="home_hero" className="group block w-full sm:w-[460px] rounded-full">
               <motion.span
                 className="btn-shimmer cta-glow relative flex items-center justify-center gap-2.5 w-full px-8 py-4 rounded-full text-[14px] font-bold tracking-wide text-sky-deep shadow-gold-lg"
                 style={{ background: 'linear-gradient(135deg, #D4A853 0%, #ECC96A 55%, #E8824A 100%)' }}

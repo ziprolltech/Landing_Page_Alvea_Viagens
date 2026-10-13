@@ -1,20 +1,15 @@
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo/page-metadata'
 import OffersGroupContent from '@/components/grupo-ofertas/OffersGroupContent'
 import { OFFERS_GROUP_VIDEO_FILE } from '@/lib/config/links'
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: '/grupo-de-ofertas',
+  shareTitle: 'Grupo de Ofertas | Alvea Viagens',
   description:
     'Receba promoções e oportunidades de viagem da Alvea Viagens diretamente no WhatsApp.',
-  openGraph: {
-    title: 'Grupo de Ofertas | Alvea Viagens',
-    description:
-      'Receba promoções e oportunidades de viagem da Alvea Viagens diretamente no WhatsApp.',
-    type: 'website',
-    locale: 'pt_BR',
-  },
-}
+})
 
 export default function GrupoDeOfertasPage() {
   // The video is optional: the player is rendered only when the file is present,

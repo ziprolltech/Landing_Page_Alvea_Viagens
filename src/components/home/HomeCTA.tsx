@@ -70,7 +70,7 @@ export default function HomeCTA() {
         {/* Buttons */}
         {/* On phones both buttons share one width and height; from `sm` they sit side by side at their own width */}
         <div className="flex flex-col sm:flex-row gap-4 mt-2 w-full max-w-[300px] sm:w-auto sm:max-w-none">
-          <Link href="/destinos" className="block">
+          <Link href="/destinos" data-track="flight_request_click" data-track-location="home_cta" className="block">
             <motion.button
               className="btn-shimmer cta-glow flex items-center justify-center gap-2.5 w-full sm:w-auto min-h-[50px] px-8 py-2.5 rounded-full text-[14px] font-semibold text-sky-deep"
               style={{

@@ -122,6 +122,8 @@ export default function JourneyFinale() {
         >
           <Link
             href="/destinos"
+            data-track="flight_request_click"
+            data-track-location="experiencias_final"
             className="btn-shimmer cta-glow group inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-full px-9 text-[15px] font-semibold text-sky-deep transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
             style={{ background: GOLD_GRADIENT }}
           >
@@ -130,6 +132,7 @@ export default function JourneyFinale() {
           </Link>
           <a
             href={buildWhatsAppUrl(SPECIALIST_MESSAGE)}
+            data-track-location="experiencias_final"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Falar com um especialista pelo WhatsApp (abre em nova aba)"

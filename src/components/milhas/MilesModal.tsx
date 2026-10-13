@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, ChevronLeft, MessageCircle, X } from 'lucide-react'
+import { WHATSAPP_NUMBER } from '@/lib/config/links'
 
 /* MilesModal — shared shell for the two /milhas questionnaires.
 
@@ -220,11 +221,23 @@ export function ContinueButton({ onClick, label = 'Continuar' }: { onClick: () =
   )
 }
 
-/* Final action: a real link to WhatsApp (new tab), so no pop-up blocker is involved */
-export function WhatsAppButton({ href, label }: { href: string; label: string }) {
+/* Final action: opens WhatsApp in a new tab with the message written out.
+   The message carries what the visitor typed (name, phone), so it is kept out
+   of the link's own address: the `href` is the plain WhatsApp chat and the full
+   address is opened on click. That way tools that record clicked links — such
+   as Google Analytics' outbound-click measurement — never see personal data. */
+export function WhatsAppButton({ href, label, onSend }: { href: string; label: string; onSend?: () => void }) {
+  function open(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault()
+    onSend?.()
+    window.open(href, '_blank', 'noopener,noreferrer')
+  }
+
   return (
     <a
-      href={href}
+      href={`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}`}
+      onClick={open}
+      data-track-location="milhas_form"
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${label} — abre o WhatsApp em nova aba`}

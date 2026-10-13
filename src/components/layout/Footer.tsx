@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Instagram, Mail } from 'lucide-react'
+import CookiePreferencesLink from '@/components/analytics/CookiePreferencesLink'
 
 const NAV_LINKS = [
   { label: 'Início',      href: '/'           },
@@ -142,6 +143,7 @@ export default function Footer() {
             Alvea Viagens — Especialistas em milhas e passagens aéreas premium
           </p>
           <p className="mt-2 text-center text-white/40 text-[12px]">CNPJ: 59.070.673/0001-60</p>
+          <CookiePreferencesLink />
         </div>
       </div>
     </footer>

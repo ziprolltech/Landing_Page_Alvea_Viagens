@@ -16,6 +16,7 @@ import TripSummary from './TripSummary'
 import type { FlightOffer, FlightSlice, CabinClass } from '@/lib/types/flights'
 import { buildWhatsAppUrl } from '@/lib/config/links'
 import { buildTripRequestMessage } from '@/lib/destinos/whatsapp-message'
+import { track } from '@/lib/analytics/gtag'
 
 /* ── Public types ───────────────────────────────────────────────────────────── */
 
@@ -384,6 +385,15 @@ export default function BookingModal({ destination, onClose }: BookingModalProps
       passengers,
       flightClass:     classLabel,
     })
+    /* Analytics: trip options only — nothing that identifies the visitor */
+    track('flight_request_whatsapp', {
+      destination_name: destination.name,
+      destination_iata: destination.iataCode,
+      trip_type:        oneWay ? 'somente_ida' : 'ida_e_volta',
+      flight_class:     classLabel,
+      passengers:       booking.passengers,
+    })
+    track('whatsapp_click', { link_location: 'destinos_form' })
     window.open(buildWhatsAppUrl(message), '_blank', 'noopener,noreferrer')
   }
 

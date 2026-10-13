@@ -3,6 +3,11 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/layout/Footer'
+import Analytics from '@/components/analytics/Analytics'
+import ConsentBanner from '@/components/analytics/ConsentBanner'
+import JsonLd from '@/components/seo/JsonLd'
+import { pageMetadata } from '@/lib/seo/page-metadata'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '@/lib/config/site'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -12,15 +17,20 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
   /* The browser tab always reads "Alvea Viagens": pages do not set their own title. */
   title: 'Alvea Viagens',
+  /* Same artwork as public/favicon-alvea.png, resized (scripts/build-brand-images.mjs):
+     the original is 1.5 MB, too heavy to be downloaded by every visitor. */
   icons: {
-    icon:     [{ url: '/favicon-alvea.png', type: 'image/png' }],
-    shortcut: '/favicon-alvea.png',
-    apple:    '/favicon-alvea.png',
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icons/icon-48.png',  type: 'image/png', sizes: '48x48'   },
+      { url: '/icons/icon-192.png', type: 'image/png', sizes: '192x192' },
+    ],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
   },
-  description:
-    'Passagens aéreas, milhas e oportunidades exclusivas para você viajar mais pagando menos.',
   keywords: [
     'milhas aéreas',
     'passagens aéreas',
@@ -29,13 +39,15 @@ export const metadata: Metadata = {
     'viagens premium',
     'alvea viagens',
   ],
-  openGraph: {
-    title: 'Alvea Viagens — Transformamos Milhas em Experiências Inesquecíveis',
-    description:
-      'Passagens aéreas, milhas e oportunidades exclusivas para você viajar mais pagando menos.',
-    type: 'website',
-    locale: 'pt_BR',
-  },
+  /* Home: description, canonical, Open Graph and Twitter card. Every other page
+     replaces these through pageMetadata(). */
+  ...pageMetadata({
+    path: '/',
+    shareTitle: 'Alvea Viagens — Transformamos milhas em experiências inesquecíveis',
+    description: SITE_DESCRIPTION,
+  }),
+  robots: { index: true, follow: true },
+  formatDetection: { telephone: false },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -51,11 +63,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               'linear-gradient(180deg, #020810 0%, #03101E 8%, #061826 18%, #0A2340 33%, #112D52 50%, #173965 66%, #1F4674 80%, #285383 90%, #305C8C 100%)',
           }}
         />
+        <JsonLd />
         <Navbar />
         <div className="relative">
           {children}
         </div>
         <Footer />
+        <ConsentBanner />
+        <Analytics />
       </body>
     </html>
   )

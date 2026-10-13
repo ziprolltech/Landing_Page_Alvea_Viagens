@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react'
 import PageHeader   from '@/components/ui/PageHeader'
 import SectionReveal from '@/components/ui/SectionReveal'
 import BookingModal  from '@/components/booking/BookingModal'
+import { track } from '@/lib/analytics/gtag'
 
 /* ── Types ─────────────────────────────────────────────────────────────── */
 type Destination = {
@@ -370,7 +371,18 @@ function ContinentSection({
       >
         {continent.destinations.map((dest) => (
           <motion.div key={dest.name} variants={cardVariants}>
-            <DestinationCard dest={dest} onOpen={() => onOpen(dest)} />
+            <DestinationCard
+              dest={dest}
+              onOpen={() => {
+                track('destination_interest', {
+                  destination_name:    dest.name,
+                  destination_iata:    dest.iataCode,
+                  destination_country: dest.country,
+                  continent:           continent.name,
+                })
+                onOpen(dest)
+              }}
+            />
           </motion.div>
         ))}
       </motion.div>
