@@ -4,6 +4,20 @@ Chronological history of significant project changes.
 
 ---
 
+## [GA4 property connected] — 2026-10-13
+
+**Summary:** the GA4 property now exists (`G-PGVBY1GKMD`). No code change was needed: the loader, the consent banner and the events were already in place and read the ID from `NEXT_PUBLIC_GA_MEASUREMENT_ID`. Documentation updated with the ID and the activation steps.
+
+### What changed
+- Docs only: `analytics.md`, `deployment.md`, `integrations.md`, `.env.local.example`.
+
+### Verified
+- `eslint`, `tsc`, `next build` clean with the real ID.
+- Headless Chrome against the local build, Google reachable: nothing requested before "Aceitar"; `gtag.js` requested once; exactly one `page_view` per navigation (first load, menu navigation, browser back, reload); one `whatsapp_click` per click; refusal removes the `_ga` cookies and stops every hit. Google answered 204 to every hit.
+- **Not verified:** the Realtime report (no access to the GA account); production — the published bundles did not contain the ID, and the Vercel connection used here is not allowed to read or create environment variables. The variable has to be added by hand, Production only, followed by a redeploy.
+
+---
+
 ## [Launch readiness — SEO, analytics with consent, conversion events] — 2026-10-13
 
 **Summary:** technical SEO completed, Google Analytics 4 prepared behind a real consent banner, business events wired, operating guides written. Diagnosis and decisions: `launch-readiness-audit-2026-10.md`.

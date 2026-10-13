@@ -142,15 +142,11 @@ Verified in the October 2026 audit: there is no AirportDB, API Ninjas, or any ot
 
 ---
 
-### Google Analytics / Analytics Platform
+### Google Analytics 4
 
-**Priority:** Medium
-**Status:** Not started
+**Status:** Implemented; switched on by `NEXT_PUBLIC_GA_MEASUREMENT_ID` (property `G-PGVBY1GKMD`)
 
-No analytics are currently implemented. When added:
-- Use `next/script` in `layout.tsx` to load the GA script
-- Or use a privacy-first alternative (Plausible, Fathom) for GDPR compliance
-- Track conversion events: WhatsApp link clicks, booking modal opens, form submissions
+Loaded directly with `gtag.js`, only after the visitor accepts the cookie banner. One loader, no Google Tag Manager. Full description, events and validation steps: [analytics.md](./analytics.md).
 
 ---
 
@@ -177,12 +173,11 @@ Current (values never belong in docs or git):
 
 `.env.local` is git-ignored. `.env.local.example` is out of date: it states that no API keys are required and lists no variable.
 
-No `NEXT_PUBLIC_*` variable exists.
+`NEXT_PUBLIC_GA_MEASUREMENT_ID` (Google Analytics, public identifier) is the only `NEXT_PUBLIC_*` variable; it is set in Vercel, not in `.env.local`. See [deployment.md](./deployment.md).
 
 Possible future additions:
 ```bash
 RESEND_API_KEY=         # For contact form email delivery
-NEXT_PUBLIC_GA_ID=      # For Google Analytics
 ```
 
 **Rule:** `NEXT_PUBLIC_` prefix exposes variables to the browser. API keys must NEVER have this prefix — keep them server-side only.

@@ -2,20 +2,37 @@
 
 ## Situação atual
 
-**O código está pronto e desligado.** Enquanto a variável `NEXT_PUBLIC_GA_MEASUREMENT_ID` não existir na Vercel, o site não carrega nada do Google, não grava cookie e não mostra aviso de cookies. Nenhum dado está sendo coletado ainda.
+- **Propriedade:** criada. **ID da métrica: `G-PGVBY1GKMD`** (identificador público, não é segredo).
+- **Código:** pronto e testado com esse ID (ver "O que foi testado").
+- **Produção:** a medição só liga quando a variável `NEXT_PUBLIC_GA_MEASUREMENT_ID` existir na Vercel e houver um deploy feito depois dela. Em 2026-10-13 o site publicado **não** continha o ID: nenhum script do Google, nenhum cookie e nenhum aviso de cookies. Ou a variável ainda não foi criada, ou foi criada depois do último deploy.
 
-Não foi possível conferir se a variável já existe na Vercel (o acesso usado na implementação não lista variáveis), e nenhuma propriedade do Google Analytics foi acessada.
+O acesso usado na implementação não tem permissão para ler nem criar variáveis na Vercel (as duas tentativas foram recusadas), então esse passo é manual.
 
-## Ligar (uma vez)
+## Ligar em produção
 
-1. Em `analytics.google.com`, crie uma **conta** e uma **propriedade** GA4 para a Alvea (fuso "Brasília", moeda "Real"). Se já existir uma, use-a.
-2. Em **Administrador → Coleta e modificação de dados → Fluxos de dados → Adicionar fluxo → Web**, informe `https://www.alveaviagens.com.br` e crie o fluxo.
-3. Copie o **ID da métrica**, no formato `G-XXXXXXXXXX`.
-4. No mesmo fluxo, em **Medição otimizada**, deixe ligado (é o padrão). O item **"Mudanças na página com base em eventos do histórico de navegação"** precisa ficar marcado: é ele que conta as páginas quando o visitante navega pelo menu.
-5. Na Vercel: projeto `alvea-viagens` → **Settings → Environment Variables** → nome `NEXT_PUBLIC_GA_MEASUREMENT_ID`, valor o ID copiado, ambiente **Production apenas** (desmarque Preview e Development). Salve.
-6. Em **Deployments**, abra o último deploy de produção → menu **⋯ → Redeploy**. A variável só entra em vigor em um deploy novo.
+1. Na Vercel: projeto `alvea-viagens` → **Settings → Environment Variables → Add**.
+   - **Key:** `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+   - **Value:** `G-PGVBY1GKMD`
+   - **Environments:** marque **só Production** (desmarque Preview e Development).
+   - Se a variável já existir, confira o valor e o ambiente em vez de criar outra.
+2. **Deployments** → último deploy de produção → menu **⋯ → Redeploy**. O valor é gravado no site na hora do build: sem um deploy novo nada muda.
+3. Valide pelos passos de "Validar que está funcionando".
 
-O ID não é segredo: ele aparece no código de qualquer site que usa Analytics. Mesmo assim ele fica só na Vercel, não no repositório. Não coloque o ID no `.env.local`: assim os testes no seu computador não são contados.
+Para desligar: apague a variável e faça Redeploy. O site volta a não carregar nada do Google e o aviso some.
+
+### No painel do Google Analytics
+
+- Em **Administrador → Coleta e modificação de dados → Fluxos de dados → o fluxo Web**, o endereço deve ser `https://www.alveaviagens.com.br`.
+- **Medição otimizada** ligada (é o padrão), com **"Mudanças na página com base em eventos do histórico de navegação"** marcado: é esse item que conta as páginas quando o visitante navega pelo menu. O site não envia `page_view` por conta própria — se o item for desmarcado, só a primeira página de cada visita será contada.
+- **Não instale a tag de novo** por outro caminho (Tag Manager, "Instalar manualmente", plug-in): o site já carrega o `gtag.js` uma vez, e uma segunda instalação dobraria todos os números.
+
+### No seu computador (desenvolvimento)
+
+Não é preciso configurar nada: sem a variável, o site roda igual, sem Analytics e sem aviso. Deixe assim no dia a dia, para que os testes locais não entrem nos relatórios.
+
+Só para testar a medição localmente, acrescente ao `.env.local` a linha `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-PGVBY1GKMD`, reinicie o `npm run dev`, e **remova a linha ao terminar**. As visitas feitas assim vão para a propriedade real, com endereço `localhost`.
+
+O ID nunca é escrito no código: o único lugar que o lê é `src/lib/analytics/config.ts`, que aceita apenas o formato `G-XXXXXXXXXX` e ignora qualquer outro valor.
 
 ## Como funciona no site
 
@@ -88,21 +105,33 @@ Depois de configurar a variável e refazer o deploy:
 4. Navegue pelo menu: cada página deve gerar um `page_view` — um só por página. Se aparecerem dois, alguém instalou uma segunda tag (por exemplo, pelo Tag Manager).
 5. Clique em "Emitir Passagem", abra um destino, clique no WhatsApp do rodapé: `flight_request_click`, `destination_interest` e `whatsapp_click` devem aparecer em "Tempo real → Contagem de eventos por nome".
 
+Se o aviso de cookies **não** aparecer na janela anônima, a variável não entrou no deploy: confira o nome, o valor, o ambiente Production e se o Redeploy foi feito depois de salvar.
+
 Para ver os parâmetros de cada evento, use o **DebugView** (**Administrador → Exibição de dados → DebugView**): instale no Chrome a extensão oficial "Google Analytics Debugger", ative-a, recarregue o site e aceite os cookies. Os eventos aparecem em linha do tempo, e clicar em um deles mostra os parâmetros.
 
 Teste também o caminho oposto: em outra janela anônima clique em **Recusar** e confira que nada novo aparece em "Tempo real".
 
-### O que foi testado na implementação
+### O que foi testado
 
-Em um navegador automatizado, contra o build local, com um ID de teste e **todas as requisições ao Google bloqueadas** (nenhum dado chegou a nenhuma propriedade):
+**Com o ID real `G-PGVBY1GKMD`, em 2026-10-13**, em um navegador automatizado contra o build local, com as requisições ao Google liberadas:
 
-- antes da escolha: nenhuma requisição ao Google, nenhum evento;
-- "Aceitar" em uma segunda página: o script é pedido uma única vez e a campanha da primeira página (`utm_source`, `utm_medium`, `utm_campaign`) é repassada;
-- `destination_interest`, `flight_request_click`, `whatsapp_click`, `email_click`, `instagram_click`, `offer_group_click` e `contact_form_submit` disparam uma vez por ação, com os parâmetros da tabela;
-- formulário de atendimento vazio não gera evento; preenchido, gera — e nenhum dado digitado aparece nos eventos;
-- a escolha persiste ao recarregar; "Recusar" pelo link do rodapé interrompe a medição; recarregar depois de recusar não carrega nada.
+- antes da escolha, e depois de navegar sem responder ao aviso: nenhuma requisição ao Google, nenhum cookie;
+- "Aceitar" na segunda página: o `gtag.js` é pedido **uma vez**, os cookies `_ga` e `_ga_PGVBY1GKMD` são gravados e sai **um** `page_view`, com a campanha da primeira página (`utm_source`, `utm_medium`, `utm_campaign`);
+- navegar pelo menu (duas páginas) e voltar pelo botão do navegador: **um** `page_view` por navegação, sem repetição;
+- clique no WhatsApp do rodapé: **um** `whatsapp_click` com `link_location: footer`;
+- recarregar a página com a escolha guardada: o script é pedido uma vez e sai um `page_view`;
+- "Recusar" pelo link do rodapé: os cookies `_ga` são apagados e nenhum envio acontece nas navegações e cliques seguintes; ao recarregar, o script não é pedido;
+- o Google respondeu `204` (aceito) a todos os envios; nenhum erro no console.
 
-Conferidos apenas por leitura do código, sem execução: `flight_request_whatsapp` e `miles_form_submit` (ficam no último passo de formulários longos). O `page_view` em si é enviado pelo script do Google, que estava bloqueado no teste — só dá para confirmá-lo com o ID real, pelos passos acima.
+Esse teste gerou cerca de seis visualizações com endereço `localhost` e campanha `validacao_ga4` na propriedade. Podem aparecer nos relatórios desse dia e devem ser ignoradas.
+
+**Antes, com um ID de teste e o Google bloqueado:** `destination_interest`, `flight_request_click`, `email_click`, `instagram_click`, `offer_group_click` e `contact_form_submit` disparam uma vez por ação, com os parâmetros da tabela; formulário de atendimento vazio não gera evento; nenhum dado digitado aparece nos eventos.
+
+**Não verificado:**
+
+- a chegada dos dados aos relatórios (não há acesso à conta do Google Analytics) — confirme pelo "Tempo real", passos acima;
+- o site em produção com a medição ligada — depende da variável na Vercel;
+- `flight_request_whatsapp` e `miles_form_submit`, que ficam no último passo de formulários longos: conferidos por leitura do código, sem execução.
 
 ## Google Tag Manager
 
@@ -131,7 +160,7 @@ Decisões técnicas tomadas — **isto não é parecer jurídico nem garantia de
 
 Pontos que pedem avaliação de um advogado ou de quem responde pela empresa:
 
-1. **Política de privacidade.** O site não tem. A LGPD exige informar quem trata os dados, para quê, por quanto tempo e como exercer direitos. O texto precisa ser escrito ou aprovado pela empresa; quando existir, o aviso de cookies deve apontar para ele.
+1. **Política de privacidade.** O site não tem, e o aviso de cookies por isso não aponta para nenhuma. É a principal lacuna ao ligar a medição. A LGPD exige informar quem trata os dados, para quê, por quanto tempo e como exercer direitos. O texto precisa ser escrito ou aprovado pela empresa; quando existir, o aviso de cookies deve apontar para ele.
 2. **Encarregado (DPO)** e canal de contato para pedidos de titulares.
 3. **Transferência internacional:** os dados do Analytics são processados pelo Google fora do Brasil.
 4. **Dados recebidos pelo WhatsApp** (nome, telefone, e-mail dos formulários): o tratamento acontece fora do site, mas é da empresa.

@@ -42,7 +42,7 @@ None is required for the site to work.
 
 | Name | Where it is read | Needed |
 |---|---|---|
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Browser — `src/lib/analytics/config.ts` | To switch Google Analytics on. Format `G-XXXXXXXXXX`. Set it for the **Production** environment only, then redeploy. Without it no tag, cookie or consent banner exists. See `analytics.md` |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Browser — `src/lib/analytics/config.ts` | To switch Google Analytics on. Value `G-PGVBY1GKMD`. Set it for the **Production** environment only, then redeploy. On 2026-10-13 the published site did not contain it yet. Without it no tag, cookie or consent banner exists. See `analytics.md` |
 | `DUFFEL_API_KEY` | Server only — `src/lib/duffel/client.ts`, used by `/api/flights/search` | Only if live flight search is switched back on |
 | `DUFFEL_ENV` | Server only | Same |
 
